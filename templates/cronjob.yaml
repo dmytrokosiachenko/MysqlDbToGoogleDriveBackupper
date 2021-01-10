@@ -1,0 +1,47 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{.Release.Name}}
+  labels:
+    release: {{.Release.Name}}
+spec:
+  schedule: {{.Values.backup.croninterval | quote}}
+  concurrencyPolicy: "Forbid"
+  failedJobsHistoryLimit: 10
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 3300 # 55min
+      template:
+        spec:
+          containers:
+            - name: mysql-to-google-drive-synchronizer
+              image: dkosiac/mysql-to-google-drive-synchronizer:latest
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: YOUR_EMAIL
+                  value: {{.Values.google_drive.your_email}}
+                - name: BACKUP_FOLDER_NAME
+                  value: {{.Values.google_drive.folder_name}}
+                - name: BACKUPS_TO_KEEP
+                  value: {{.Values.backup.backups_to_keep | quote}}
+                - name: DB_HOST
+                  value: {{.Values.mysql.db_host}}
+                - name: BACKUP_NAME
+                  value: {{.Values.google_drive.backup_name}}
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{.Release.Name}}
+                      key: db_user
+                - name: DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{.Release.Name}}
+                      key: db_password
+                - name: "client_secrets.json"
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{.Release.Name}}
+                      key: "client_secrets.json"
+          restartPolicy: OnFailure

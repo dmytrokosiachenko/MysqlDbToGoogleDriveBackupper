@@ -1,0 +1,14 @@
+google_drive:
+  folder_name: mariadb_backup
+  backup_name: mariadb-backup.sql
+  your_email: user@gmail.com
+
+mysql:
+  db_user: user
+  db_password: password
+  db_host: mariadb
+  db_port: 3306
+
+backup:
+  croninterval: "0 */2 * * *"
+  backups_to_keep: 5
