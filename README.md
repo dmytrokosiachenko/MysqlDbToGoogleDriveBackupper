@@ -1,6 +1,6 @@
 # MySqlToGoogleDriveBackupper
 
-Helm chart for making periodical backups for all tables on MariaDB or MySQL host running in Kubernetes into your Google Drive.
+Helm chart for making periodical backups for all tables on MariaDB or MySQL host running in Kubernetes into your Google Drive storage.
 
 It is useful if you are running bare-metal k8s cluster but still want to backup your DB data in the cloud.
 
